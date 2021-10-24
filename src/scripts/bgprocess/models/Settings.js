@@ -200,7 +200,8 @@ define(['backbone', 'preps/indexeddb'], function (BB) {
             invertColors: 'no',
             defaultView: 'feed',
             cacheParsedArticles: 'false',
-            defaultToUnreadOnly: 'false'
+            defaultToUnreadOnly: 'false',
+            enableYoutubePreview: true,
         },
         /**
          * @property localStorage
