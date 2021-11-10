@@ -260,6 +260,14 @@ define(function (require) {
                             audio.querySelector('source').src = enclosureData.url;
                             break;
                         case 'youtube':
+                            // Do not create YouTube Preview if disabled
+                            if (!bg.settings.get('enableYoutubePreview')) {
+                                newEnclosure = document
+                                    .createRange()
+                                    .createContextualFragment(require('text!templates/enclosureGeneral.html'));
+                                break;
+                            }
+
                             newEnclosure = document
                                 .createRange()
                                 .createContextualFragment(require('text!templates/enclosureYoutubeCover.html'));
