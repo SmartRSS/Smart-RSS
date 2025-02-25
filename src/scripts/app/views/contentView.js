@@ -115,7 +115,7 @@ define(function (require) {
          * @param id {Number} id of the closed tab
          */
         handleClearEvents: function (id) {
-            if (window == null || id === tabID) {
+            if (!window || id === tabID) {
                 bg.items.off("change:pinned", this.handleItemsPin, this);
                 bg.sources.off("clear-events", this.handleClearEvents, this);
             }
@@ -266,7 +266,7 @@ define(function (require) {
                     let newEnclosure;
 
                     switch (enclosureData.medium) {
-                        case "image":
+                        case "image": {
                             newEnclosure = document
                                 .createRange()
                                 .createContextualFragment(
@@ -276,7 +276,8 @@ define(function (require) {
                             img.src = enclosureData.url;
                             img.alt = enclosureData.name;
                             break;
-                        case "video":
+                        }
+                        case "video": {
                             newEnclosure = document
                                 .createRange()
                                 .createContextualFragment(
@@ -288,7 +289,8 @@ define(function (require) {
                             video.querySelector("source").type =
                                 enclosureData.type;
                             break;
-                        case "audio":
+                        }
+                        case "audio": {
                             newEnclosure = document
                                 .createRange()
                                 .createContextualFragment(
@@ -298,7 +300,8 @@ define(function (require) {
                             audio.querySelector("source").src =
                                 enclosureData.url;
                             break;
-                        case "youtube":
+                        }
+                        case "youtube": {
                             newEnclosure = document
                                 .createRange()
                                 .createContextualFragment(
@@ -315,7 +318,7 @@ define(function (require) {
                             cover.style.backgroundImage = `url("${posterUrl}")`;
 
                             cover.addEventListener("click", () => {
-                                iframeEnclosure = document
+                                const iframeEnclosure = document
                                     .createRange()
                                     .createContextualFragment(
                                         require("text!templates/enclosureYoutube.html")
@@ -328,12 +331,14 @@ define(function (require) {
                             });
 
                             break;
-                        default:
+                        }
+                        default: {
                             newEnclosure = document
                                 .createRange()
                                 .createContextualFragment(
                                     require("text!templates/enclosureGeneral.html")
                                 );
+                        }
                     }
 
                     newEnclosure.querySelector("a").href = enclosureData.url;

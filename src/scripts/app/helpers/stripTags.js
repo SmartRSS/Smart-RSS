@@ -7,7 +7,7 @@
  */
 define(function () {
     return function (str) {
-        if (str == null) {
+        if (!str) {
             return '';
         }
         return String(str).replace(/<\/?[^>]+>/g, '');

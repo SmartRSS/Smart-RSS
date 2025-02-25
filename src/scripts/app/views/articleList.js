@@ -422,7 +422,7 @@ define([
                     }
 
                     let internalCounter = 0;
-                    while (true) {
+                    while (internalCounter !== 100 && startingPoint + internalCounter !== length) {
                         const item = items[startingPoint + internalCounter];
                         if (!item) {
                             break;
@@ -430,9 +430,6 @@ define([
                         item.multiple = multiple;
                         that.addItem(item, true);
                         internalCounter++;
-                        if (internalCounter === 100 || startingPoint + internalCounter === length) {
-                            break;
-                        }
                     }
                     if (startingPoint + internalCounter === length) {
                         if (document.querySelector('input[type="search"]').value !== '') {

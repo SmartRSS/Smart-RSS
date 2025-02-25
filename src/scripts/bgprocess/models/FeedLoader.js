@@ -79,7 +79,7 @@ define(["modules/RSSParser", "favicon"], function (RSSParser, Favicon) {
             );
 
             RegExp.escape = function (text) {
-                return String(text).replace(/[\-\[\]\/{}()*+?.\\^$|]/g, "\\$&");
+                return String(text).replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&");
             };
             const insert = [];
 

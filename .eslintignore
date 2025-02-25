@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Documentation
+docs/
+
+# Third-party libraries
+src/scripts/libs/ 

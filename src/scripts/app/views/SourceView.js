@@ -15,7 +15,7 @@ define([
                 this.el.view = this;
             },
             handleClearEvents: function (id) {
-                if (window == null || id === tabID) {
+                if (!window || id === tabID) {
                     this.clearEvents();
                 }
             },

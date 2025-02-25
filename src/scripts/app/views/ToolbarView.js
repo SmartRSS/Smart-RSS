@@ -31,7 +31,7 @@ define([
              * @param id {Number} ID of closed tab
              */
             handleClearEvents: function (id) {
-                if (window == null || id === tabID) {
+                if (!window || id === tabID) {
                     this.stopListening();
                     bg.sources.off('clear-events', this.handleClearEvents, this);
                 }

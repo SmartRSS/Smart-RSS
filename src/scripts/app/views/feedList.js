@@ -184,7 +184,7 @@ define([
              * @param id {Number} id of the closed tab
              */
             handleClearEvents: function (id) {
-                if (window == null || id === tabID) {
+                if (!window || id === tabID) {
                     bg.sources.off('reset', this.addSources, this);
                     bg.sources.off('add', this.addSource, this);
                     bg.sources.off('change:folderID', this.handleChangeFolder, this);

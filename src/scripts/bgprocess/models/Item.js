@@ -63,7 +63,7 @@ define(['backbone'], function (BB) {
                 return true;
             }
             for (let i in o) {
-                if (o.hasOwnProperty(i)) {
+                if (o.hasOwn(i)) {
                     if (this.get(i) !== o[i]) {
                         return false;
                     }

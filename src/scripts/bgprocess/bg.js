@@ -53,7 +53,7 @@ define(function (require) {
     }
 
     function onMessage(message) {
-        if (!message.hasOwnProperty("action")) {
+        if (!message.hasOwn("action")) {
             return;
         }
 

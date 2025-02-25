@@ -512,7 +512,7 @@ define(["helpers/stripTags", "modules/Locale", "controllers/comm"], function (
                     }
                     RegExp.escape = function (text) {
                         return String(text).replace(
-                            /[\-\[\]\/{}()*+?.\\^$|]/g,
+                            /[-[\]/{}()*+?.\\^$|]/g,
                             "\\$&"
                         );
                     };
@@ -911,7 +911,7 @@ define(["helpers/stripTags", "modules/Locale", "controllers/comm"], function (
                         },
                         function (tabs) {
                             if (tabs[0]) {
-                                if (tabs[0].active && closeIfActive) {
+                                if (tabs[0].active) {
                                     browser.tabs.remove(tabs[0].id);
                                 } else {
                                     browser.tabs.update(tabs[0].id, {

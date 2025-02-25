@@ -32,7 +32,7 @@ define(["../app/staticdb/actions", "staticdb/shortcuts"], function (
                             : parseInt($1.substr(1), 10)
                     );
                 } else {
-                    return map.hasOwnProperty($1) ? map[$1] : $0;
+                    return map.hasOwn($1) ? map[$1] : $0;
                 }
             }
         );
@@ -225,7 +225,7 @@ define(["../app/staticdb/actions", "staticdb/shortcuts"], function (
             });
 
             for (const region in hotkeys) {
-                if (hotkeys.hasOwnProperty(region)) {
+                if (hotkeys.hasOwn(region)) {
                     const regionElement = document.createElement("section");
                     regionElement.id = region;
                     const regionHeader = document.createElement("h3");
@@ -317,7 +317,7 @@ define(["../app/staticdb/actions", "staticdb/shortcuts"], function (
             Object.entries(actionsMap).forEach((action) => {
                 const actionOption = document.createElement("option");
                 actionOption.value = action[0];
-                actionOption.textContent = !!action[1] ? action[1] : action[0];
+                actionOption.textContent = action[1] ? action[1] : action[0];
                 actionSelect.insertAdjacentElement("beforeend", actionOption);
             });
             actionSelect.value = actionString;
@@ -798,7 +798,7 @@ define(["../app/staticdb/actions", "staticdb/shortcuts"], function (
         }
         const request = indexedDB.open("backbone-indexeddb", 4);
         request.addEventListener("success", function () {
-            db = this.result;
+            const db = this.result;
             const transaction = db.transaction(
                 ["settings-backbone"],
                 "readwrite"

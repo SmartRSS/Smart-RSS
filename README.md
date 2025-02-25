@@ -41,11 +41,26 @@ npm install
 
 Sometimes you may encounter texts ending with `*` or `!` in app, first ones are fallbacks to English text when used locale lacks the needed one and the latter are actual keys displayed when even English text is missing, feel free to submit PR's to fill them. If you change wording or punctuation somewhere please comment that line (using GitHub interface) with reasoning like common conventions or special punctuation rules in given language.
 
-To check for jshint errors:
+### Code Quality
+
+The project uses a clear separation of concerns for code quality:
+
+-   **ESLint** checks for logical and semantic issues (potential bugs, unused variables, etc.)
+-   **EditorConfig** handles all formatting concerns (indentation, line endings, quotes, etc.)
+
+This separation ensures that ESLint focuses on code correctness while EditorConfig manages consistent formatting across different editors and IDEs.
+
+To lint your code:
 
 ```
-jshint .
+npm run lint
 ```
+
+This will check your code for:
+
+-   Syntax errors and potential bugs
+-   Logical issues and best practices
+-   Browser extension-specific concerns
 
 ### Build System
 

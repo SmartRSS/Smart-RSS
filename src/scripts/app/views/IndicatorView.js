@@ -58,7 +58,7 @@ define(function (require) {
          * @param id {Integer} ID of the closed tab
          */
         handleClearEvents: function (id) {
-            if (window == null || id === tabID) {
+            if (!window || id === tabID) {
                 bg.sources.off("clear-events", this.handleClearEvents, this);
             }
         },

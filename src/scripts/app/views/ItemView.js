@@ -70,7 +70,7 @@ define([
          * @param id {Number} ID of closed tab
          */
         handleClearEvents: function (id) {
-            if (window == null || id === tabID) {
+            if (!window || id === tabID) {
                 this.clearEvents();
             }
         },

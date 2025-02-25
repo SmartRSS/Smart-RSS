@@ -89,14 +89,14 @@ define([
 
         const baseStyleTag =
             frame.contentDocument.querySelector("[data-base-style]");
-        if (!!baseStyleTag) {
+        if (baseStyleTag) {
             baseStyleTag.setAttribute("href", baseStylePath);
         }
 
         const darkStylePath = browser.runtime.getURL("styles/dark.css");
         const darkStyleTag =
             frame.contentDocument.querySelector("[data-dark-style]");
-        if (!!darkStyleTag) {
+        if (darkStyleTag) {
             darkStyleTag.setAttribute("href", darkStylePath);
         }
     }
@@ -123,7 +123,7 @@ define([
             bg.sources.on("clear-events", this.handleClearEvents, this);
         },
         handleClearEvents: function (id) {
-            if (window == null || id === tabID) {
+            if (!window || id === tabID) {
                 bg.settings.off("change:layout", this.handleLayoutChange, this);
                 bg.sources.off("clear-events", this.handleClearEvents, this);
             }

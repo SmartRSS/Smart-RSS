@@ -7,18 +7,19 @@
         "@types/firefox-webext-browser": "^120.0.4",
         "adm-zip": "^0.5.16",
         "chokidar": "^3.5.3",
+        "eslint": "^8.57.1",
         "md5-file": "^5.0.0",
         "semver": "^7.7.1"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "prepare": "node build.js prepare",
         "package": "node build.js package",
         "release": "node build.js release",
         "release:minor": "node build.js release minor",
         "release:major": "node build.js release major",
         "watch": "node build.js watch",
-        "bump-version": "node build.js bump-version"
+        "bump-version": "node build.js bump-version",
+        "lint": "eslint src/"
     },
     "repository": {
         "type": "git",
@@ -29,5 +30,12 @@
     "bugs": {
         "url": "https://github.com/zakius/Smart-RSS/issues"
     },
-    "engine": "node >= 12.0.0"
+    "engines": {
+        "node": ">=12.0.0"
+    },
+    "browserslist": [
+        "last 2 Firefox versions",
+        "last 2 Chrome versions"
+    ],
+    "private": true
 }
