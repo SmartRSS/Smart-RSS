@@ -4,14 +4,13 @@
     "description": "RSS Reader",
     "homepage": "https://github.com/zakius/Smart-RSS",
     "devDependencies": {
-        "@types/firefox-webext-browser": "^94.0.1",
-        "adm-zip": "^0.4.14",
-        "grunt": "^1.1.0",
+        "@types/firefox-webext-browser": "^120.0.4",
+        "adm-zip": "^0.5.16",
+        "grunt": "^1.6.1",
         "grunt-contrib-copy": "^1.0.0",
         "grunt-contrib-watch": "^1.1.0",
-        "md5-file": "^4.0.0",
-        "semver": "^6.1.1",
-        "@types/chrome": "^0.0.188"
+        "md5-file": "^5.0.0",
+        "semver": "^7.7.1"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"

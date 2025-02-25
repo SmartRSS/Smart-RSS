@@ -3,8 +3,8 @@
  * @submodule views/contentView
  */
 define(function (require) {
-    const BB = require('backbone');
-    const dateUtils = require('helpers/dateUtils');
+    const BB = require("backbone");
+    const dateUtils = require("helpers/dateUtils");
 
     /**
      * Full view of one article (right column)
@@ -13,21 +13,20 @@ define(function (require) {
      * @extends Backbone.View
      */
     let ContentView = BB.View.extend({
-
         /**
          * Tag name of content view element
          * @property tagName
          * @default 'header'
          * @type String
          */
-        tagName: 'header',
+        tagName: "header",
         events: {
-            'mousedown': 'handleMouseDown',
-            'click .pin-button': 'handlePinClick',
-            'keydown': 'handleKeyDown'
+            mousedown: "handleMouseDown",
+            "click .pin-button": "handlePinClick",
+            keydown: "handleKeyDown",
         },
 
-        view: '',
+        view: "",
 
         /**
          * Changes pin state
@@ -37,27 +36,25 @@ define(function (require) {
          */
         handlePinClick: function (event) {
             const target = event.target;
-            if (target.classList.contains('pinned')) {
-                target.classList.remove('pinned');
+            if (target.classList.contains("pinned")) {
+                target.classList.remove("pinned");
             } else {
-                target.classList.add('pinned');
+                target.classList.add("pinned");
             }
             this.model.save({
-                pinned: target.classList.contains('pinned')
+                pinned: target.classList.contains("pinned"),
             });
         },
-
 
         /**
          * Called when new instance is created
          * @method initialize
          */
         initialize: function () {
+            this.on("attach", this.handleAttached);
 
-            this.on('attach', this.handleAttached);
-
-            bg.items.on('change:pinned', this.handleItemsPin, this);
-            bg.sources.on('clear-events', this.handleClearEvents, this);
+            bg.items.on("change:pinned", this.handleItemsPin, this);
+            bg.sources.on("clear-events", this.handleClearEvents, this);
         },
 
         /**
@@ -66,22 +63,35 @@ define(function (require) {
          * @triggered when content view is attached to DOM
          */
         handleAttached: function () {
-            app.on('select:article-list', function (data) {
-                this.handleNewSelected(bg.items.findWhere({id: data.value}));
-            }, this);
+            app.on(
+                "select:article-list",
+                function (data) {
+                    this.handleNewSelected(
+                        bg.items.findWhere({ id: data.value })
+                    );
+                },
+                this
+            );
 
-            app.on('space-pressed', function () {
-                this.handleSpace();
-            }, this);
+            app.on(
+                "space-pressed",
+                function () {
+                    this.handleSpace();
+                },
+                this
+            );
 
-            app.on('no-items:article-list', function () {
-                if (this.renderTimeout) {
-                    clearTimeout(this.renderTimeout);
-                }
-                this.model = null;
-                this.hide();
-            }, this);
-
+            app.on(
+                "no-items:article-list",
+                function () {
+                    if (this.renderTimeout) {
+                        clearTimeout(this.renderTimeout);
+                    }
+                    this.model = null;
+                    this.hide();
+                },
+                this
+            );
         },
 
         /**
@@ -90,9 +100,9 @@ define(function (require) {
          * @triggered when space is pressed in middle column
          */
         handleSpace: function () {
-            const cw = document.querySelector('#content');
+            const cw = document.querySelector("#content");
             if (cw.offsetHeight + cw.scrollTop >= cw.scrollHeight) {
-                app.trigger('give-me-next');
+                app.trigger("give-me-next");
             } else {
                 cw.scrollBy(0, cw.offsetHeight * 0.85);
             }
@@ -106,8 +116,8 @@ define(function (require) {
          */
         handleClearEvents: function (id) {
             if (window == null || id === tabID) {
-                bg.items.off('change:pinned', this.handleItemsPin, this);
-                bg.sources.off('clear-events', this.handleClearEvents, this);
+                bg.items.off("change:pinned", this.handleItemsPin, this);
+                bg.sources.off("clear-events", this.handleClearEvents, this);
             }
         },
 
@@ -119,11 +129,11 @@ define(function (require) {
          */
         handleItemsPin: function (model) {
             if (model === this.model) {
-                const pinButton = this.el.querySelector('.pin-button');
-                if (this.model.get('pinned')) {
-                    pinButton.classList.add('pinned');
+                const pinButton = this.el.querySelector(".pin-button");
+                if (this.model.get("pinned")) {
+                    pinButton.classList.add("pinned");
                 } else {
-                    pinButton.classList.remove('pinned');
+                    pinButton.classList.remove("pinned");
                 }
             }
         },
@@ -134,12 +144,24 @@ define(function (require) {
          * @param unixtime {Number}
          */
         getFormattedDate: function (unixtime) {
-            const dateFormats = {normal: 'DD.MM.YYYY', iso: 'YYYY-MM-DD', us: 'MM/DD/YYYY'};
-            const pickedFormat = dateFormats[bg.settings.get('dateType') || 'normal'] || dateFormats['normal'];
+            const dateFormats = {
+                normal: "DD.MM.YYYY",
+                iso: "YYYY-MM-DD",
+                us: "MM/DD/YYYY",
+            };
+            const pickedFormat =
+                dateFormats[bg.settings.get("dateType") || "normal"] ||
+                dateFormats["normal"];
 
-            const timeFormat = bg.settings.get('hoursFormat') === '12h' ? 'H:mm:ss a' : 'hh:mm:ss';
+            const timeFormat =
+                bg.settings.get("hoursFormat") === "12h"
+                    ? "H:mm:ss a"
+                    : "hh:mm:ss";
 
-            return dateUtils.formatDate(unixtime, pickedFormat + ' ' + timeFormat);
+            return dateUtils.formatDate(
+                unixtime,
+                pickedFormat + " " + timeFormat
+            );
         },
 
         /**
@@ -156,57 +178,62 @@ define(function (require) {
          * @method render
          * @chainable
          */
-        render: function (overrideView = '') {
+        render: function (overrideView = "") {
             clearTimeout(this.renderTimeout);
 
             this.renderTimeout = setTimeout(async () => {
                 if (!this.model) {
                     return;
                 }
-                const modelUrl = this.model.get('url');
+                const modelUrl = this.model.get("url");
 
                 this.show();
                 const source = this.model.getSource();
-                const openEnclosure = bg.getElementBoolean(source, 'openEnclosure');
-                const defaultView = bg.getElementSetting(source, 'defaultView');
-
+                const openEnclosure = bg.getElementBoolean(
+                    source,
+                    "openEnclosure"
+                );
+                const defaultView = bg.getElementSetting(source, "defaultView");
 
                 const data = Object.create(this.model.attributes);
-                data.date = this.getFormattedDate(this.model.get('date'));
-                data.titleIsLink = bg.getBoolean('titleIsLink');
+                data.date = this.getFormattedDate(this.model.get("date"));
+                data.titleIsLink = bg.getBoolean("titleIsLink");
                 data.open = openEnclosure;
 
-                let content = '';
+                let content = "";
 
-
-                if (overrideView !== '') {
+                if (overrideView !== "") {
                     this.view = overrideView;
                 } else {
                     this.view = defaultView;
                 }
 
-                if (this.view === 'feed') {
-                    content = this.model.get('content');
+                if (this.view === "feed") {
+                    content = this.model.get("content");
                 } else {
                     // const parsedContent = this.model.get('parsedContent');
                     // if (this.view in parsedContent) {
                     //     content = parsedContent[this.view];
                     // } else {
-                    if (this.view === 'mozilla') {
-                        const response = await fetch(this.model.get('url'), {
-                            method: 'GET',
-                            redirect: 'follow', // manual, *follow, error
-                            referrerPolicy: 'no-referrer'
+                    if (this.view === "mozilla") {
+                        const response = await fetch(this.model.get("url"), {
+                            method: "GET",
+                            redirect: "follow", // manual, *follow, error
+                            referrerPolicy: "no-referrer",
                         });
                         const websiteContent = await response.text();
 
                         const parser = new DOMParser();
-                        const websiteDocument = parser.parseFromString(websiteContent, 'text/html');
-                        const Readability = require('../../libs/readability');
-                        if (this.model.get('url') !== modelUrl) {
+                        const websiteDocument = parser.parseFromString(
+                            websiteContent,
+                            "text/html"
+                        );
+                        const Readability = require("../../libs/readability");
+                        if (this.model.get("url") !== modelUrl) {
                             return;
                         }
-                        content = new Readability(websiteDocument).parse().content;
+                        content = new Readability(websiteDocument).parse()
+                            .content;
                     }
                     // }
                     // if (bg.settings.get('cacheParsedArticles') === 'true' && !(this.view in parsedContent)) {
@@ -214,102 +241,131 @@ define(function (require) {
                     //     this.model.set('parsedContent', parsedContent);
                     // }
                 }
-                const toRemove = chrome.runtime.getURL('');
-                const re = new RegExp(toRemove, 'g');
-                content = content.replace(re, '/');
+                const toRemove = browser.runtime.getURL("");
+                const re = new RegExp(toRemove, "g");
+                content = content.replace(re, "/");
 
                 while (this.el.firstChild) {
                     this.el.removeChild(this.el.firstChild);
                 }
 
-                const fragment = document.createRange().createContextualFragment(require('text!templates/contentView.html'));
-                fragment.querySelector('.author').textContent = data.author;
-                fragment.querySelector('.date').textContent = data.date;
+                const fragment = document
+                    .createRange()
+                    .createContextualFragment(
+                        require("text!templates/contentView.html")
+                    );
+                fragment.querySelector(".author").textContent = data.author;
+                fragment.querySelector(".date").textContent = data.date;
                 if (data.pinned) {
-                    fragment.querySelector('.pin-button').classList.add('pinned');
+                    fragment
+                        .querySelector(".pin-button")
+                        .classList.add("pinned");
                 }
 
                 function createEnclosure(enclosureData) {
                     let newEnclosure;
 
                     switch (enclosureData.medium) {
-                        case 'image':
+                        case "image":
                             newEnclosure = document
                                 .createRange()
-                                .createContextualFragment(require('text!templates/enclosureImage.html'));
-                            const img = newEnclosure.querySelector('img');
+                                .createContextualFragment(
+                                    require("text!templates/enclosureImage.html")
+                                );
+                            const img = newEnclosure.querySelector("img");
                             img.src = enclosureData.url;
                             img.alt = enclosureData.name;
                             break;
-                        case 'video':
+                        case "video":
                             newEnclosure = document
                                 .createRange()
-                                .createContextualFragment(require('text!templates/enclosureVideo.html'));
-                            const video = newEnclosure.querySelector('video');
-                            video.querySelector('source').src = enclosureData.url;
-                            video.querySelector('source').type = enclosureData.type;
+                                .createContextualFragment(
+                                    require("text!templates/enclosureVideo.html")
+                                );
+                            const video = newEnclosure.querySelector("video");
+                            video.querySelector("source").src =
+                                enclosureData.url;
+                            video.querySelector("source").type =
+                                enclosureData.type;
                             break;
-                        case 'audio':
+                        case "audio":
                             newEnclosure = document
                                 .createRange()
-                                .createContextualFragment(require('text!templates/enclosureAudio.html'));
-                            const audio = newEnclosure.querySelector('audio');
-                            audio.querySelector('source').src = enclosureData.url;
+                                .createContextualFragment(
+                                    require("text!templates/enclosureAudio.html")
+                                );
+                            const audio = newEnclosure.querySelector("audio");
+                            audio.querySelector("source").src =
+                                enclosureData.url;
                             break;
-                        case 'youtube':
+                        case "youtube":
                             newEnclosure = document
                                 .createRange()
-                                .createContextualFragment(require('text!templates/enclosureYoutubeCover.html'));
-                            const videoId = /^.*\/(.*)\?(.*)$/.exec(enclosureData.url)[1];
+                                .createContextualFragment(
+                                    require("text!templates/enclosureYoutubeCover.html")
+                                );
+                            const videoId = /^.*\/(.*)\?(.*)$/.exec(
+                                enclosureData.url
+                            )[1];
 
                             const posterUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
                             const videoUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`;
-                            const cover = newEnclosure.querySelector('.youtube-cover');
+                            const cover =
+                                newEnclosure.querySelector(".youtube-cover");
                             cover.style.backgroundImage = `url("${posterUrl}")`;
 
-                            cover.addEventListener('click', () => {
+                            cover.addEventListener("click", () => {
                                 iframeEnclosure = document
                                     .createRange()
-                                    .createContextualFragment(require('text!templates/enclosureYoutube.html'));
-                                const iframe = iframeEnclosure.querySelector('iframe');
+                                    .createContextualFragment(
+                                        require("text!templates/enclosureYoutube.html")
+                                    );
+                                const iframe =
+                                    iframeEnclosure.querySelector("iframe");
                                 iframe.src = videoUrl;
                                 cover.replaceWith(iframeEnclosure);
                                 iframeEnclosure.focus();
                             });
 
-
                             break;
                         default:
                             newEnclosure = document
                                 .createRange()
-                                .createContextualFragment(require('text!templates/enclosureGeneral.html'));
+                                .createContextualFragment(
+                                    require("text!templates/enclosureGeneral.html")
+                                );
                     }
 
-                    newEnclosure.querySelector('a').href = enclosureData.url;
-                    newEnclosure.querySelector('a').textContent = enclosureData.name;
+                    newEnclosure.querySelector("a").href = enclosureData.url;
+                    newEnclosure.querySelector("a").textContent =
+                        enclosureData.name;
 
                     return newEnclosure;
                 }
 
                 if (data.enclosure) {
-                    const enclosures = Array.isArray(data.enclosure) ? data.enclosure : [data.enclosure];
+                    const enclosures = Array.isArray(data.enclosure)
+                        ? data.enclosure
+                        : [data.enclosure];
                     enclosures.forEach((enclosureData) => {
                         const enclosure = createEnclosure(enclosureData);
-                        fragment.querySelector('#below-h1').appendChild(enclosure);
+                        fragment
+                            .querySelector("#below-h1")
+                            .appendChild(enclosure);
                     });
                     if (data.open && enclosures.length === 1) {
-                        fragment.querySelector('.enclosure').setAttribute('open', 'open');
+                        fragment
+                            .querySelector(".enclosure")
+                            .setAttribute("open", "open");
                     }
-
-
                 }
                 this.el.appendChild(fragment);
-                const h1 = this.el.querySelector('h1');
+                const h1 = this.el.querySelector("h1");
                 if (data.titleIsLink) {
-                    const link = document.createElement('a');
-                    link.target = '_blank';
-                    link.tabindex = '-1';
-                    link.href = data.url ? data.url : '#';
+                    const link = document.createElement("a");
+                    link.target = "_blank";
+                    link.tabindex = "-1";
+                    link.href = data.url ? data.url : "#";
                     link.textContent = data.title;
                     h1.appendChild(link);
                 } else {
@@ -320,39 +376,43 @@ define(function (require) {
                 const sandbox = app.content.sandbox;
                 const frame = sandbox.el;
 
-
-                frame.setAttribute('scrolling', 'no');
+                frame.setAttribute("scrolling", "no");
 
                 const resizeFrame = () => {
-                    const scrollHeight = frame.contentDocument.body.scrollHeight;
-                    frame.style.minHeight = '10px';
-                    frame.style.minHeight = '70%';
+                    const scrollHeight =
+                        frame.contentDocument.body.scrollHeight;
+                    frame.style.minHeight = "10px";
+                    frame.style.minHeight = "70%";
                     frame.style.minHeight = `${scrollHeight}px`;
 
-                    frame.style.height = '10px';
-                    frame.style.height = '70%';
+                    frame.style.height = "10px";
+                    frame.style.height = "70%";
                     frame.style.height = `${scrollHeight}px`;
                 };
 
                 const loadContent = () => {
-                    const body = frame.contentDocument.querySelector('body');
-                    const articleUrl = this.model.get('url');
+                    const body = frame.contentDocument.querySelector("body");
+                    const articleUrl = this.model.get("url");
                     const articleDomain = new URL(articleUrl).origin;
 
-                    let base = frame.contentDocument.querySelector('base');
+                    let base = frame.contentDocument.querySelector("base");
                     base.href = articleDomain;
-                    const shouldInvertColors = bg.getBoolean('invertColors');
+                    const shouldInvertColors = bg.getBoolean("invertColors");
                     if (shouldInvertColors) {
-                        body.classList.add('dark-theme');
+                        body.classList.add("dark-theme");
                     } else {
-                        body.classList.remove('dark-theme');
+                        body.classList.remove("dark-theme");
                     }
 
                     frame.contentWindow.scrollTo(0, 0);
-                    document.querySelector('#content').scrollTo(0, 0);
-                    frame.contentDocument.documentElement.style.fontSize = bg.settings.get('articleFontSize') + '%';
+                    document.querySelector("#content").scrollTo(0, 0);
+                    frame.contentDocument.documentElement.style.fontSize =
+                        bg.settings.get("articleFontSize") + "%";
 
-                    const contentElement = frame.contentDocument.querySelector('#smart-rss-content');
+                    const contentElement =
+                        frame.contentDocument.querySelector(
+                            "#smart-rss-content"
+                        );
 
                     while (contentElement.firstChild) {
                         contentElement.removeChild(contentElement.firstChild);
@@ -360,29 +420,41 @@ define(function (require) {
 
                     let fragment;
                     switch (data.enclosure.medium) {
-                        case 'youtube':
-                            fragment = document.createRange().createContextualFragment(content.replace(/\r/g, '<br>'));
+                        case "youtube":
+                            fragment = document
+                                .createRange()
+                                .createContextualFragment(
+                                    content.replace(/\r/g, "<br>")
+                                );
                             break;
                         default:
-                            fragment = document.createRange().createContextualFragment(content);
+                            fragment = document
+                                .createRange()
+                                .createContextualFragment(content);
                     }
                     contentElement.appendChild(fragment);
 
-
-                    frame.contentDocument.querySelector('#smart-rss-url').href = articleUrl;
-                    frame.contentDocument.querySelector('#full-article-url').textContent = articleUrl;
+                    frame.contentDocument.querySelector("#smart-rss-url").href =
+                        articleUrl;
+                    frame.contentDocument.querySelector(
+                        "#full-article-url"
+                    ).textContent = articleUrl;
 
                     const clickHandler = (event) => {
-                        if (event.target.matches('a')) {
+                        if (event.target.matches("a")) {
                             event.stopPropagation();
-                            const href = event.target.getAttribute('href');
-                            if (!href || href[0] !== '#') {
+                            const href = event.target.getAttribute("href");
+                            if (!href || href[0] !== "#") {
                                 return true;
                             }
                             event.preventDefault();
                             const name = href.substring(1);
-                            const nameElement = frame.contentDocument.querySelector('[name="' + name + ']"');
-                            const idElement = frame.contentDocument.getElementById(name);
+                            const nameElement =
+                                frame.contentDocument.querySelector(
+                                    '[name="' + name + ']"'
+                                );
+                            const idElement =
+                                frame.contentDocument.getElementById(name);
                             let element = null;
                             if (nameElement) {
                                 element = nameElement;
@@ -394,49 +466,81 @@ define(function (require) {
                                     const box = el.getBoundingClientRect();
 
                                     return {
-                                        top: box.top + frame.contentWindow.pageYOffset - frame.contentDocument.documentElement.clientTop,
-                                        left: box.left + frame.contentWindow.pageXOffset - frame.contentDocument.documentElement.clientLeft
+                                        top:
+                                            box.top +
+                                            frame.contentWindow.pageYOffset -
+                                            frame.contentDocument
+                                                .documentElement.clientTop,
+                                        left:
+                                            box.left +
+                                            frame.contentWindow.pageXOffset -
+                                            frame.contentDocument
+                                                .documentElement.clientLeft,
                                     };
                                 };
 
                                 const offset = getOffset(element);
-                                frame.contentWindow.scrollTo(offset.left, offset.top);
+                                frame.contentWindow.scrollTo(
+                                    offset.left,
+                                    offset.top
+                                );
                             }
 
                             return false;
                         }
                     };
 
-                    frame.contentDocument.removeEventListener('click', clickHandler);
-                    frame.contentDocument.addEventListener('click', clickHandler);
+                    frame.contentDocument.removeEventListener(
+                        "click",
+                        clickHandler
+                    );
+                    frame.contentDocument.addEventListener(
+                        "click",
+                        clickHandler
+                    );
 
-                    frame.contentDocument.removeEventListener('load', resizeFrame);
-                    frame.contentDocument.addEventListener('load', resizeFrame);
+                    frame.contentDocument.removeEventListener(
+                        "load",
+                        resizeFrame
+                    );
+                    frame.contentDocument.addEventListener("load", resizeFrame);
 
-                    if (typeof ResizeObserver !== 'undefined') {
+                    if (typeof ResizeObserver !== "undefined") {
                         const resizeObserver = new ResizeObserver(resizeFrame);
                         resizeObserver.observe(frame.contentDocument.body);
                     }
 
-                    [...frame.contentDocument.querySelectorAll('img, picture, iframe, video, audio')]
-                        .forEach((element) => {
-                            if (element.src.startsWith('https://www.youtube.com/watch?')) {
-                                element.src = element.src.replace('https://www.youtube.com/watch?v=', 'https://www.youtube-nocookie.com/embed/');
-                                element.removeAttribute('allowfullscreen');
-                                element.removeAttribute('height');
-                                element.removeAttribute('width');
-                                element.setAttribute('allowfullscreen', 'allowfullscreen');
-                            }
-                            element.onload = resizeFrame;
-                        });
+                    [
+                        ...frame.contentDocument.querySelectorAll(
+                            "img, picture, iframe, video, audio"
+                        ),
+                    ].forEach((element) => {
+                        if (
+                            element.src.startsWith(
+                                "https://www.youtube.com/watch?"
+                            )
+                        ) {
+                            element.src = element.src.replace(
+                                "https://www.youtube.com/watch?v=",
+                                "https://www.youtube-nocookie.com/embed/"
+                            );
+                            element.removeAttribute("allowfullscreen");
+                            element.removeAttribute("height");
+                            element.removeAttribute("width");
+                            element.setAttribute(
+                                "allowfullscreen",
+                                "allowfullscreen"
+                            );
+                        }
+                        element.onload = resizeFrame;
+                    });
                     resizeFrame();
                 };
-
 
                 if (sandbox.loaded) {
                     loadContent();
                 } else {
-                    sandbox.on('load', loadContent);
+                    sandbox.on("load", loadContent);
                 }
             }, 50);
 
@@ -466,9 +570,11 @@ define(function (require) {
          * @method hide
          */
         hide: function () {
-            [...document.querySelectorAll('header,iframe')].forEach((element) => {
-                element.hidden = true;
-            });
+            [...document.querySelectorAll("header,iframe")].forEach(
+                (element) => {
+                    element.hidden = true;
+                }
+            );
         },
 
         /**
@@ -476,10 +582,12 @@ define(function (require) {
          * @method hide
          */
         show: function () {
-            [...document.querySelectorAll('header,iframe')].forEach((element) => {
-                element.hidden = false;
-            });
-        }
+            [...document.querySelectorAll("header,iframe")].forEach(
+                (element) => {
+                    element.hidden = false;
+                }
+            );
+        },
     });
 
     return new ContentView();

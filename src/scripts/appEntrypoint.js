@@ -1,38 +1,36 @@
 require.config({
-
-    baseUrl: 'scripts/app',
+    baseUrl: "scripts/app",
     waitSeconds: 0,
 
     paths: {
-        jquery: '../libs/jquery.min',
-        underscore: '../libs/underscore.min',
-        backbone: '../libs/backbone.min',
-        text: '../libs/require.text'
+        jquery: "../libs/jquery.min",
+        underscore: "../libs/underscore.min",
+        backbone: "../libs/backbone.min",
+        text: "../libs/require.text",
     },
 
     shim: {
         jquery: {
-            exports: '$'
+            exports: "$",
         },
         backbone: {
-            deps: ['underscore'],
-            exports: 'Backbone'
+            deps: ["underscore"],
+            exports: "Backbone",
         },
         underscore: {
-            exports: '_'
-        }
-    }
+            exports: "_",
+        },
+    },
 });
 
-chrome.runtime.getBackgroundPage(function (bg) {
+browser.runtime.getBackgroundPage(function (bg) {
     /**
      * Setup work, that has to be done before any dependencies get executed
      */
     window.bg = bg;
     bg.appStarted.then(() => {
-        requirejs(['app'], function (app) {
+        requirejs(["app"], function (app) {
             app.start();
         });
     });
 });
-

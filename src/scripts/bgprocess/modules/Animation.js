@@ -13,7 +13,9 @@ define(function () {
         i: 2,
         interval: null,
         update: function () {
-            chrome.browserAction.setIcon({path: '/images/reload_anim_' + this.i + '.png'});
+            browser.browserAction.setIcon({
+                path: "/images/reload_anim_" + this.i + ".png",
+            });
             this.i++;
             if (this.i > 4) {
                 this.i = 1;
@@ -38,17 +40,17 @@ define(function () {
             if (this.interval) {
                 return;
             }
-            const icon = settings.get('icon');
-            if (sources.findWhere({hasNew: true}) && icon !== 'disabled') {
-                chrome.browserAction.setIcon({
-                    path: '/images/icon19-' + icon + '.png'
+            const icon = settings.get("icon");
+            if (sources.findWhere({ hasNew: true }) && icon !== "disabled") {
+                browser.browserAction.setIcon({
+                    path: "/images/icon19-" + icon + ".png",
                 });
             } else {
-                chrome.browserAction.setIcon({
-                    path: '/images/icon19.png'
+                browser.browserAction.setIcon({
+                    path: "/images/icon19.png",
                 });
             }
-        }
+        },
     };
     return Animation;
 });
