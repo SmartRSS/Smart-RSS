@@ -1,65 +1,69 @@
 {
-    "name": "Smart RSS",
-    "developer": {
-        "name": "zakius"
-    },
-    "description": "RSS Reader",
-    "manifest_version": 2,
-    "version": "2.25.1",
-    "background": {
-        "page": "index.html"
-    },
-    "permissions": [
-        "unlimitedStorage",
-        "alarms",
-        "tabs",
-        "contextMenus",
-        "<all_urls>",
-        "*://*/*",
-        "https://code.fb.com/*",
-        "https://dev.opera.com/*",
-        "webRequest",
-        "webRequestBlocking",
-        "notifications"
-    ],
-    "content_security_policy": "default-src * 'self' data: 'unsafe-inline'; script-src 'self'; style-src * 'self' data: 'unsafe-inline'; img-src * 'self' data:; object-src 'self'",
-    "browser_action": {
-        "default_title": "Smart RSS",
-        "default_icon": {
-            "19": "images/reload_anim_1.png"
-        }
-    },
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "run_at": "document_end",
-            "js": ["rssDetector/scan.js"]
-        }
-    ],
-    "options_ui": {
-        "page": "options.html",
-        "open_in_tab": true
-    },
-    "icons": {
-        "19": "images/icon19-arrow-orange.png",
-        "48": "images/48-inverted-round.png",
-        "64": "images/64-inverted-round.png",
-        "96": "images/96-inverted-round.png",
-        "128": "images/128-inverted-round.png"
-    },
-    "commands": {
-        "_execute_browser_action": {
-            "suggested_key": {
-                "windows": "Ctrl+Shift+R",
-                "mac": "Command+Shift+R",
-                "chromeos": "Ctrl+Shift+R",
-                "linux": "Ctrl+Shift+R"
-            }
-        }
-    },
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "smart-rss@mozilla.firefox"
-        }
+  "name": "Smart RSS",
+  "developer": {
+    "name": "zakius"
+  },
+  "description": "RSS Reader",
+  "manifest_version": 2,
+  "version": "2.26.0",
+  "background": {
+    "page": "index.html"
+  },
+  "permissions": [
+    "unlimitedStorage",
+    "alarms",
+    "tabs",
+    "contextMenus",
+    "<all_urls>",
+    "*://*/*",
+    "https://code.fb.com/*",
+    "https://dev.opera.com/*",
+    "webRequest",
+    "webRequestBlocking",
+    "notifications"
+  ],
+  "content_security_policy": "default-src * 'self' data: 'unsafe-inline'; script-src 'self'; style-src * 'self' data: 'unsafe-inline'; img-src * 'self' data:; object-src 'self'",
+  "browser_action": {
+    "default_title": "Smart RSS",
+    "default_icon": {
+      "19": "images/reload_anim_1.png"
     }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_end",
+      "js": [
+        "rssDetector/scan.js"
+      ]
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "19": "images/icon19-arrow-orange.png",
+    "48": "images/48-inverted-round.png",
+    "64": "images/64-inverted-round.png",
+    "96": "images/96-inverted-round.png",
+    "128": "images/128-inverted-round.png"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R",
+        "chromeos": "Ctrl+Shift+R",
+        "linux": "Ctrl+Shift+R"
+      }
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "smart-rss@mozilla.firefox"
+    }
+  }
 }
