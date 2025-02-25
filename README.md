@@ -14,7 +14,7 @@ Extension is available in following repositories:
 
 #### AMO: https://addons.mozilla.org/firefox/addon/smart-rss-reader/
 
-#### Chrome Web Store: https://chrome.google.com/webstore/detail/eggggihfcaabljfpjiiaohloefmgejic/
+~#### Chrome Web Store: https://chrome.google.com/webstore/detail/eggggihfcaabljfpjiiaohloefmgejic/~
 
 If you encounter issue with a specific feed for best results please back up and include current state of that feed in your report, this will be helpful in case the feed changes before I get to check it, thanks in advance
 
