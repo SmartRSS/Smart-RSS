@@ -1,6 +1,6 @@
 # Smart RSS extension
 
-## Now officially unmaintained, I *may* fix some critical issue if any is found within few following weeks, but then I'll archive this repo. Feel free to fork and continue development as you wish
+## Now officially unmaintained, I _may_ fix some critical issue if any is found within few following weeks, but then I'll archive this repo. Feel free to fork and continue development as you wish
 
 Originally developed for Opera 15+ by BS-Harou (Martin Kadlec)
 
@@ -29,8 +29,7 @@ If you are interested in improving Smart RSS then there are few tips to get star
 First of all you will need several command line tools:
 
 -   Git
--   Node.JS & npm
--   Grunt-cli
+-   Node.JS (v12 or higher recommended) & npm
 
 To setup your Smart RSS project open your console, go to your projects folders and type:
 
@@ -48,27 +47,41 @@ To check for jshint errors:
 jshint .
 ```
 
-There are multiple grunt tasks defined for this project but only few are meant to be run directly:
+### Build System
 
+The build system has been simplified to a plain Node.js script. You can use npm scripts to run the build tasks:
+
+```bash
+# Copy files from src to dist and strip comments
+npm run prepare
+
+# Prepare and create zip package
+npm run package
+
+# Bump version, commit, prepare, and create zip package (patch version)
+npm run release
+
+# Bump minor version, commit, prepare, and create zip package
+npm run release:minor
+
+# Bump major version, commit, prepare, and create zip package
+npm run release:major
+
+# Watch for changes in src directory
+npm run watch
+
+# Bump version number (patch by default)
+npm run bump-version
 ```
-grunt prepare
+
+Or you can use the build script directly:
+
+```bash
+node build.js prepare
+node build.js package
+node build.js release [patch|minor|major]
+node build.js watch
+node build.js bump-version [patch|minor|major]
 ```
 
-copies relevant source files to browser specific directories within `dist` subdirectory and cleans up manifests from values not needed by the given browser.
-
-```
-grunt watch
-```
-
-watches for changes in `src` directory and performs `prepare` every time it detects one
-
-```
-grunt release:{level=patch}
-```
-
-is all-in-one solution for releasing new versions of the extension
-
--   increases extension version in manifest by semver `level`
--   commits changes with relevant message
--   performs `prepare`
--   creates browser specific packages of the extension
+For more details about the build system, see [BUILD.md](BUILD.md).

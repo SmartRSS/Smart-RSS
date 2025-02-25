@@ -6,14 +6,19 @@
     "devDependencies": {
         "@types/firefox-webext-browser": "^120.0.4",
         "adm-zip": "^0.5.16",
-        "grunt": "^1.6.1",
-        "grunt-contrib-copy": "^1.0.0",
-        "grunt-contrib-watch": "^1.1.0",
+        "chokidar": "^3.5.3",
         "md5-file": "^5.0.0",
         "semver": "^7.7.1"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "prepare": "node build.js prepare",
+        "package": "node build.js package",
+        "release": "node build.js release",
+        "release:minor": "node build.js release minor",
+        "release:major": "node build.js release major",
+        "watch": "node build.js watch",
+        "bump-version": "node build.js bump-version"
     },
     "repository": {
         "type": "git",
@@ -24,5 +29,5 @@
     "bugs": {
         "url": "https://github.com/zakius/Smart-RSS/issues"
     },
-    "engine": "node >= 0.10.0"
+    "engine": "node >= 12.0.0"
 }
