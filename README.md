@@ -1,5 +1,7 @@
 # Smart RSS extension
 
+## Now officially unmaintained, I *may* fix some critical issue if any is found within few following weeks, but then I'll archive this repo. Feel free to fork and continue development as you wish
+
 Originally developed for Opera 15+ by BS-Harou (Martin Kadlec)
 
 Translations are in scripts/nls/\*.js
