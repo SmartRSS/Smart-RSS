@@ -18,9 +18,6 @@ Extension is available in following repositories:
 
 If you encounter issue with a specific feed for best results please back up and include current state of that feed in your report, this will be helpful in case the feed changes before I get to check it, thanks in advance
 
-## Known issues:
-
--   in Firefox builds prior to `2017-08-09` and derivatives there's issue with CSP that causes extension to fail all requests following the one that got blocked, the only way to recover is to reload extension but it will happen again next time given source is loaded, issue reported to Waterfox MrAlex94/Waterfox#1780 in hope the fix will get ported to Classic - in the meantime attempted to work around this bug by removing CSP header from data loaded by the extension
 
 ## For developers
 
