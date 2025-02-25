@@ -53,7 +53,7 @@ define(function (require) {
     }
 
     function onMessage(message) {
-        if (!message.hasOwn("action")) {
+        if (!message.hasOwnProperty("action")) {
             return;
         }
 
@@ -318,9 +318,9 @@ define(function (require) {
                 return;
             }
             const oneTask = tasks.shift();
-            oneTask.always(function () {
-                resolve(fetchOne(tasks));
-            });
+            oneTask
+                .then(() => resolve(fetchOne(tasks)))
+                .catch(() => resolve(fetchOne(tasks)));
         });
     }
 

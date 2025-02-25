@@ -1,8 +1,9 @@
 /**
- * My own Backbone indexDB Adapter based on indexedDB adapter from jeromegn:
+ * Backbone indexDB Adapter
+ * Based on indexedDB adapter from jeromegn, but rewritten to use native Promises
+ * instead of jQuery Deferred objects.
  *
- * Version 1.1.6
- * https://github.com/jeromegn/Backbone.localStorage
+ * Original: https://github.com/jeromegn/Backbone.localStorage
  */
 (function (factory) {
     define(['backbone'], function (Backbone) {
@@ -10,9 +11,7 @@
     });
 }(function (Backbone) {
     // A simple module to replace `Backbone.sync` with *IndexedDB*-based
-    // persistence. Models are given GUIDS, and saved into a JSON object. Simple
-    // as that.
-
+    // persistence. Models are given GUIDS, and saved into a JSON object.
 
     // Generate four random hex digits.
     function S4() {
@@ -20,7 +19,6 @@
     }
 
     // Generate a pseudo-GUID by concatenating random hexadecimal.
-
     function guid() {
         return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
     }
@@ -63,47 +61,81 @@
                 model.id = guid();
                 model.set(model.idAttribute, model.id);
             }
-            this.indexedDB().add(model.toJSON());
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    const request = this.indexedDB().add(model.toJSON());
+                    request.onsuccess = () => resolve(model);
+                    request.onerror = (error) => reject(error);
+                } catch (error) {
+                    reject(error);
+                }
+            });
         },
 
         // Update a model by replacing its copy in `this.data`.
-        update: function (model, cb) {
-            this.indexedDB().put(model.toJSON());
+        update: function (model) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const request = this.indexedDB().put(model.toJSON());
+                    request.onsuccess = () => resolve(model);
+                    request.onerror = (error) => reject(error);
+                } catch (error) {
+                    reject(error);
+                }
+            });
         },
 
         // Retrieve a model from `this.data` by id.
-        find: function (model, cb) {
-            const request = this.indexedDB().get(model.id);
-            request.onsuccess = function () {
-                cb(this.result);
-            };
-            request.onerror = function () {
-                throw 'IndexDB Error: Can\'t read from or write to database';
-            };
+        find: function (model) {
+            return new Promise((resolve, reject) => {
+                const request = this.indexedDB().get(model.id);
+                request.onsuccess = function () {
+                    resolve(this.result);
+                };
+                request.onerror = function () {
+                    reject('IndexDB Error: Can\'t read from or write to database');
+                };
+            });
         },
 
         // Return the array of all models currently in storage.
-        findAll: function (cb) {
-            const items = [];
-
-            this.indexedDB('readonly').openCursor().onsuccess = function (event) {
-                const cursor = this.result;
-                if (cursor) {
-                    items.push(cursor.value);
-                    cursor.continue();
-                } else {
-                    cb(items);
-                }
-            };
+        findAll: function () {
+            return new Promise((resolve, reject) => {
+                const items = [];
+                const request = this.indexedDB('readonly').openCursor();
+                
+                request.onsuccess = function (event) {
+                    const cursor = this.result;
+                    if (cursor) {
+                        items.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(items);
+                    }
+                };
+                
+                request.onerror = function () {
+                    reject('IndexDB Error: Can\'t read from or write to database');
+                };
+            });
         },
 
         // Delete a model from `this.data`, returning it.
         destroy: function (model) {
             if (model.isNew()) {
-                return false;
+                return Promise.resolve(false);
             }
-            this.indexedDB().delete(model.id);
-            return model;
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    const request = this.indexedDB().delete(model.id);
+                    request.onsuccess = () => resolve(model);
+                    request.onerror = (error) => reject(error);
+                } catch (error) {
+                    reject(error);
+                }
+            });
         },
 
         indexedDB: (function () {
@@ -142,15 +174,25 @@
             };
         })(),
 
-        _clear: function (cb) {
-            const req = this.indexedDB().clear();
-            req.onsuccess = cb;
-            req.onerror = cb;
+        _clear: function () {
+            return new Promise((resolve, reject) => {
+                const req = this.indexedDB().clear();
+                req.onsuccess = () => resolve();
+                req.onerror = (error) => reject(error);
+            });
         },
 
         // Size of indexedDB.
-        _storageSize: function (cb) {
-            this.indexedDB().count().onsuccess = cb;
+        _storageSize: function () {
+            return new Promise((resolve, reject) => {
+                const req = this.indexedDB().count();
+                req.onsuccess = function() {
+                    resolve(this.result);
+                };
+                req.onerror = function(error) {
+                    reject(error);
+                };
+            });
         }
 
     });
@@ -164,83 +206,104 @@
 
         const that = this;
 
-        let errorMessage;
-        let syncDfd = options.syncDfd || (Backbone.$.Deferred && Backbone.$.Deferred()); //If $ is having Deferred - use it.
-        options.syncDfd = syncDfd;
-
-        if (!store.db) {
-            store.dbRequest.addEventListener('success', function (e) {
-                store.db = this.result;
-                Backbone.IndexedDB.sync.call(that, method, model, options);
-            });
-        } else {
-
-            const cbh = callbackHandler.bind(this, options);
-
-            try {
-                switch (method) {
-                    case 'read':
-                        model.id !== undefined ? store.find(model, cbh) : store.findAll(cbh);
-                        break;
-                    case 'create':
-                        store.create(model, nothing);
-                        cbh(model.toJSON());
-                        break;
-                    case 'update':
-                        store.update(model, nothing);
-                        cbh(model.toJSON());
-                        break;
-                    case 'delete':
-                        store.destroy(model, nothing);
-                        cbh(model.toJSON());
-                        break;
+        // Use only native Promise
+        return new Promise((resolve, reject) => {
+            if (!store.db) {
+                store.dbRequest.addEventListener('success', function (e) {
+                    store.db = this.result;
+                    // Call sync again and pass the promise handlers
+                    Backbone.IndexedDB.sync.call(that, method, model, options)
+                        .then(resolve)
+                        .catch(reject);
+                });
+            } else {
+                try {
+                    switch (method) {
+                        case 'read':
+                            if (model.id !== undefined) {
+                                store.find(model)
+                                    .then(data => {
+                                        if (options.success) options.success(data);
+                                        if (options.complete) options.complete(data);
+                                        resolve(data);
+                                    })
+                                    .catch(error => {
+                                        if (options.error) options.error(error);
+                                        if (options.complete) options.complete(null);
+                                        reject(error);
+                                    });
+                            } else {
+                                store.findAll()
+                                    .then(data => {
+                                        if (options.success) options.success(data);
+                                        if (options.complete) options.complete(data);
+                                        resolve(data);
+                                    })
+                                    .catch(error => {
+                                        if (options.error) options.error(error);
+                                        if (options.complete) options.complete(null);
+                                        reject(error);
+                                    });
+                            }
+                            break;
+                        case 'create':
+                            store.create(model)
+                                .then(data => {
+                                    const json = model.toJSON();
+                                    if (options.success) options.success(json);
+                                    if (options.complete) options.complete(json);
+                                    resolve(json);
+                                })
+                                .catch(error => {
+                                    if (options.error) options.error(error);
+                                    if (options.complete) options.complete(null);
+                                    reject(error);
+                                });
+                            break;
+                        case 'update':
+                            store.update(model)
+                                .then(data => {
+                                    const json = model.toJSON();
+                                    if (options.success) options.success(json);
+                                    if (options.complete) options.complete(json);
+                                    resolve(json);
+                                })
+                                .catch(error => {
+                                    if (options.error) options.error(error);
+                                    if (options.complete) options.complete(null);
+                                    reject(error);
+                                });
+                            break;
+                        case 'delete':
+                            store.destroy(model)
+                                .then(data => {
+                                    const json = model.toJSON();
+                                    if (options.success) options.success(json);
+                                    if (options.complete) options.complete(json);
+                                    resolve(json);
+                                })
+                                .catch(error => {
+                                    if (options.error) options.error(error);
+                                    if (options.complete) options.complete(null);
+                                    reject(error);
+                                });
+                            break;
+                    }
+                } catch (error) {
+                    let errorMessage;
+                    if (error.code === 22) { // && store._storageSize() === 0, what is code 22?
+                        errorMessage = 'Private browsing is unsupported';
+                    } else {
+                        errorMessage = error.message;
+                    }
+                    if (options.error) options.error(errorMessage);
+                    if (options.complete) options.complete(null);
+                    reject(errorMessage);
                 }
-
-            } catch (error) {
-                if (error.code === 22) { // && store._storageSize() === 0, what is code 22?
-                    errorMessage = 'Private browsing is unsupported';
-                } else {
-                    errorMessage = error.message;
-                }
-                cbh(null, errorMessage);
             }
-        }
-        return syncDfd && syncDfd.promise();
+        });
     };
-
-    function nothing() {
-
-    }
-
-    function callbackHandler(options, resp, errorMessage) {
-
-        const syncDfd = options.syncDfd;
-        if (resp) {
-            if (options && options.success) {
-                options.success(resp);
-            }
-            if (syncDfd) {
-                syncDfd.resolve(resp);
-            }
-
-        } else {
-            errorMessage = errorMessage ? errorMessage : 'Record Not Found';
-
-            if (options && options.error) {
-                options.error(errorMessage);
-            }
-
-            if (syncDfd) {
-                syncDfd.reject(errorMessage);
-            }
-        }
-
-        if (options && options.complete) {
-            options.complete(resp);
-        }
-
-    }
-
+    
     Backbone.ajaxSync = Backbone.sync;
 
     Backbone.getSyncMethod = function (model) {

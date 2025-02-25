@@ -32,7 +32,7 @@ define(["../app/staticdb/actions", "staticdb/shortcuts"], function (
                             : parseInt($1.substr(1), 10)
                     );
                 } else {
-                    return map.hasOwn($1) ? map[$1] : $0;
+                    return map.hasOwnProperty($1) ? map[$1] : $0;
                 }
             }
         );
@@ -225,7 +225,7 @@ define(["../app/staticdb/actions", "staticdb/shortcuts"], function (
             });
 
             for (const region in hotkeys) {
-                if (hotkeys.hasOwn(region)) {
+                if (hotkeys.hasOwnProperty(region)) {
                     const regionElement = document.createElement("section");
                     regionElement.id = region;
                     const regionHeader = document.createElement("h3");
